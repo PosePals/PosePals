@@ -3,10 +3,13 @@ package com.example.competitive;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.PixelCopy;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,7 +21,11 @@ import android.widget.Spinner;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.util.Base64;
+
 import com.example.competitive.R;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
@@ -33,6 +40,35 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private int current_cpugpu = 0;
 
     private SurfaceView cameraView;
+
+    private Handler handler = new Handler();
+    private Runnable bridgeRunnable = new Runnable() {
+        @Override
+        public void run()
+        {
+            System.out.println("ads");
+
+            Bitmap bitmap = nnruntime.getBitmap();
+
+            if (bitmap != null)
+            {
+                // Step 2: Convert Bitmap to ByteArrayOutputStream
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream); // You can choose the format and quality
+
+                // Step 3: Convert ByteArrayOutputStream to byte array
+                byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+                // Step 4: Encode byte array to Base64 String
+                String base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                System.out.println(base64String);
+            }
+
+            // Schedule the next run
+            handler.postDelayed(this, 1000);
+        }
+    };
 
     /** Called when the activity is first created. */
     @Override
@@ -120,11 +156,13 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
+        handler.post(bridgeRunnable);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
+        handler.removeCallbacks(bridgeRunnable);
     }
 
     @Override

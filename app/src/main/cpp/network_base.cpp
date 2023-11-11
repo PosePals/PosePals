@@ -579,34 +579,34 @@ int NetworkBase::draw(cv::Mat& rgb, const std::vector<Object>& objects)
                          cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y),
                          cv::Scalar(255, 255, 255), 2, 8, 0);
         }
-        for (const auto& line : left_body)
-        {
-            if(obj.skeleton[line.first].visibility && obj.skeleton[line.second].visibility)
-            {
-                cv::line(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y),
-                         cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y),
-                         cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
-                cv::circle(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y), 3,
-                           cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
-                cv::circle(rgb, cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y), 3,
-                           cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
-            }
+        // for (const auto& line : left_body)
+        // {
+        //     if(obj.skeleton[line.first].visibility && obj.skeleton[line.second].visibility)
+        //     {
+        //         cv::line(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y),
+        //                  cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y),
+        //                  cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
+        //         cv::circle(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y), 3,
+        //                    cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
+        //         cv::circle(rgb, cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y), 3,
+        //                    cv::Scalar(255, 138, 0), 1, cv::LINE_AA, 0);
+        //     }
 
-        }
-        for (const auto& line : right_body)
-        {
-            if(obj.skeleton[line.first].visibility && obj.skeleton[line.second].visibility)
-            {
-                cv::line(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y),
-                         cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y),
-                         cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
-                cv::circle(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y), 3,
-                           cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
-                cv::circle(rgb, cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y), 3,
-                           cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
-            }
+        // }
+        // for (const auto& line : right_body)
+        // {
+        //     if(obj.skeleton[line.first].visibility && obj.skeleton[line.second].visibility)
+        //     {
+        //         cv::line(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y),
+        //                  cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y),
+        //                  cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
+        //         cv::circle(rgb, cv::Point(obj.skeleton[line.first].x, obj.skeleton[line.first].y), 3,
+        //                    cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
+        //         cv::circle(rgb, cv::Point(obj.skeleton[line.second].x, obj.skeleton[line.second].y), 3,
+        //                    cv::Scalar(0, 217, 231), 1, cv::LINE_AA, 0);
+        //     }
 
-        }
+        // }
     }
     return 0;
 }

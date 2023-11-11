@@ -17,6 +17,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <android/bitmap.h>
 
 
 #if __ARM_NEON
@@ -99,6 +100,10 @@ static int draw_fps(cv::Mat& rgb)
 static NetworkBase* g_network_base = 0;
 static ncnn::Mutex lock;
 
+static cv::Mat output_material;
+
+static
+
 class MyNdkCamera : public NdkCameraWindow
 {
 public:
@@ -107,6 +112,8 @@ public:
 
 void MyNdkCamera::on_image_render(cv::Mat& rgb) const
 {
+    output_material = rgb;
+
     {
         ncnn::MutexLockGuard g(lock);
 
@@ -154,7 +161,44 @@ JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
     g_camera = 0;
 }
 
+jobject mat_to_bitmap(JNIEnv *env, cv::Mat &mat, bool needPremultiplyAlpha) {
+    jclass bitmapCls = env->FindClass("android/graphics/Bitmap");
+    jmethodID createBitmapFunction = env->GetStaticMethodID(bitmapCls, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+    jstring configName = env->NewStringUTF("ARGB_8888");
+    jclass bitmapConfigCls = env->FindClass("android/graphics/Bitmap$Config");
+    jmethodID valueOfBitmapConfigFunction = env->GetStaticMethodID(bitmapConfigCls, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$Config;");
+    jobject bitmapConfig = env->CallStaticObjectMethod(bitmapConfigCls, valueOfBitmapConfigFunction, configName);
+    jobject newBitmap = env->CallStaticObjectMethod(bitmapCls, createBitmapFunction, mat.cols, mat.rows, bitmapConfig);
+
+    void *bitmapPixels;
+    AndroidBitmap_lockPixels(env, newBitmap, &bitmapPixels);
+    uint32_t* newBitmapPixels = (uint32_t*) bitmapPixels;
+    int pixelsCount = mat.cols * mat.rows;
+
+    // Copy pixels from Mat to Bitmap
+    memcpy(newBitmapPixels, mat.ptr(), sizeof(uint32_t) * pixelsCount);
+
+    AndroidBitmap_unlockPixels(env, newBitmap);
+
+    return newBitmap;
+}
+
+extern "C"
+
+JNIEXPORT jobject JNICALL Java_com_example_competitive_NNRuntime_getBitmap(JNIEnv *env, jobject thiz)
+{
+    if (!output_material.empty()) {
+        return mat_to_bitmap(env, output_material, false);
+    } else {
+        return nullptr;
+    }
+}
+
+
+
 // public native boolean loadModel(AssetManager mgr, int modelid, int cpugpu);
+extern "C"
+
 JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_loadModel(JNIEnv* env, jobject thiz, jobject assetManager, jint modelid, jint cpugpu)
 {
     if (modelid < 0 || modelid > 6 || cpugpu < 0 || cpugpu > 1)
@@ -197,6 +241,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_loadModel(JNIE
 }
 
 // public native boolean openCamera(int facing);
+extern "C"
+
 JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_openCamera(JNIEnv* env, jobject thiz, jint facing)
 {
     if (facing < 0 || facing > 1)
@@ -210,6 +256,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_openCamera(JNI
 }
 
 // public native boolean closeCamera();
+extern "C"
+
 JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_closeCamera(JNIEnv* env, jobject thiz)
 {
     __android_log_print(ANDROID_LOG_DEBUG, "ncnn", "closeCamera");
@@ -220,6 +268,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_closeCamera(JN
 }
 
 // public native boolean setOutputWindow(Surface surface);
+extern "C"
+
 JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_setOutputWindow(JNIEnv* env, jobject thiz, jobject surface)
 {
     ANativeWindow* win = ANativeWindow_fromSurface(env, surface);
