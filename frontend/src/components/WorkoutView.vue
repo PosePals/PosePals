@@ -108,7 +108,8 @@ init() {
     }
     });
     scene.add(object)
-    console.log(object);
+    //for debugging: Log object to console
+    //console.log(object);
     //for debugging: show bounding box of object.
     //let box = new Three.BoxHelper(object, 0xffff00);
     //scene.add(box);
