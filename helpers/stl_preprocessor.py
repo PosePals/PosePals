@@ -27,4 +27,4 @@ def convert_and_center_stl_to_obj(stl_filename):
     print(f"Converted and centered {stl_filename} to {obj_filename}")
 
 # Replace 'path_to_your_file.stl' with the path to your STL file
-convert_and_center_stl_to_obj('stls/pigeon.stl')
+convert_and_center_stl_to_obj('path/YOURSTL.stl')
