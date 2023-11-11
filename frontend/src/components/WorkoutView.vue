@@ -73,8 +73,8 @@ init() {
   camera.position.z = 1;
 
   scene = new Three.Scene();
-  renderer = new Three.WebGLRenderer({ antialias: true });
-  renderer.setClearColor(0xaaaaaa);
+  renderer = new Three.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setClearColor(0x000000, 0);
   const directionalLight = new Three.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(1, 1, 1).normalize();
   scene.add(directionalLight);
