@@ -3,8 +3,9 @@ import {computed, ref} from "vue";
 import WorkoutCard from "./components/WorkoutCard.vue";
 import Workouts from "@/components/Workouts.vue";
 import Scoreboard from "@/components/Scoreboard.vue";
+import WorkoutView from "@/components/WorkoutView.vue";
 
-const currView = ref(2);
+const currView = ref(1);
 </script>
 
 <template>
@@ -40,8 +41,8 @@ const currView = ref(2);
     </div>
   </main>
 
-  <main class="pt-20 py-24" v-else-if="currView == 1">
-
+  <main class="pt-16 py-24" v-else-if="currView == 1">
+    <WorkoutView></WorkoutView>
   </main>
 
   <main class="pt-20 py-24" v-else-if="currView == 2">
