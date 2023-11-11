@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -14,21 +15,51 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewClientCompat;
 
 import android.util.Base64;
-
-import com.example.competitive.R;
 
 import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
+
+    private static class LocalContentWebViewClient extends WebViewClientCompat
+    {
+
+        private final WebViewAssetLoader mAssetLoader;
+
+        LocalContentWebViewClient(WebViewAssetLoader assetLoader)
+        {
+            mAssetLoader = assetLoader;
+        }
+
+        @Override
+        @RequiresApi(21)
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request)
+        {
+            return mAssetLoader.shouldInterceptRequest(request.getUrl());
+        }
+
+        @Override
+        @SuppressWarnings("deprecation") // To support API < 21.
+        public WebResourceResponse shouldInterceptRequest(WebView view, String url)
+        {
+            return mAssetLoader.shouldInterceptRequest(Uri.parse(url));
+        }
+    }
+
     public static final int REQUEST_CAMERA = 10;
 
     private NNRuntime nnruntime = new NNRuntime();
@@ -78,7 +109,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
         setContentView(R.layout.activity_main);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         cameraView = (SurfaceView) findViewById(R.id.cameraview);
 
         cameraView.getHolder().setFormat(PixelFormat.RGBA_8888);
@@ -134,6 +164,18 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
             {
             }
         });
+
+        WebView webView = (WebView)findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true); // Enable JavaScript if needed
+
+        // Load local HTML file
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
+                .build();
+        webView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
+
+        webView.loadUrl("https://appassets.androidplatform.net/assets/ui/index.html");
 
         reload();
     }
