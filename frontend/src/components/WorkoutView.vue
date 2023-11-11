@@ -93,7 +93,7 @@ init() {
   scene = new Three.Scene();
   renderer = new Three.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
-  const directionalLight = new Three.DirectionalLight(0xffffff, 1);
+  const directionalLight = new Three.DirectionalLight(0xffffff, 0.5);
   directionalLight.position.set(1, 1, 1).normalize();
   scene.add(directionalLight);
   let ambientLight = new Three.AmbientLight(0xffffff, 0.5);
@@ -102,10 +102,13 @@ init() {
   controls.enableDamping = true; // Enable smooth animation
   controls.dampingFactor = 0.1; // Damping factor
   controls.enableZoom = true; // Enable zooming
+  controls.maxDistance = 2; // Set the maximum zoom level (distance from the target)
+  controls.minDistance = 0.3; // Set the maximum zoom level (distance from the target)
+
 
   // OBJ Loader
   let objLoader = new OBJLoader();
-  objLoader.load('bridge.obj', (object) => {
+  objLoader.load('poses/lotus.obj', (object) => {
     const boundingBox = new Three.Box3().setFromObject(object);
      // Get size of the bounding box
     const objsize = new Three.Vector3();
