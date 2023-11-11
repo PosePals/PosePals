@@ -104,6 +104,9 @@ init() {
   controls.enableZoom = true; // Enable zooming
   controls.maxDistance = 2; // Set the maximum zoom level (distance from the target)
   controls.minDistance = 0.3; // Set the maximum zoom level (distance from the target)
+  //the next two commented commands could be used for controling to max. rotation in polar coordinates
+  //controls.minPolarAngle = Math.PI / 4;   // Limit the rotation at the bottom (45 degrees)
+  //controls.maxPolarAngle = Math.PI / 2;   // Limit the rotation at the top (90 degrees)
 
 
   // OBJ Loader
