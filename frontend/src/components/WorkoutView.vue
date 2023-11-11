@@ -2,6 +2,8 @@
 import * as Three from 'three'
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
 import {MTLLoader} from 'three/examples/jsm/loaders/MTLLoader.js'
+// Define Three.js variables outside of the Vue component
+let camera, scene, renderer;
 
 export default {
   name: "WorkoutView",
@@ -55,28 +57,35 @@ export default {
         this.timeElapsed = 0
       }
     },
+
     init: function () {
-      let container = document.getElementById('container')
-      this.camera = new Three.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.01, 10);
-      this.camera.position.z = 1;
-      this.scene = new Three.Scene();
-      this.renderer.setClearColor(0xaaaaaa)
-      let ambientLight = new Three.AmbientLight(0xffffff, 0.5)
-      this.scene.add(ambientLight)
-      this.loader = new OBJLoader();
-      this.loader.load('crow_mesh_lixel.obj', (loadedObject) => {
-        this.scene.add(loadedObject)
-        console.log(loadedObject);
-      })
-      this.renderer = new Three.WebGLRenderer({antialias: true});
-      this.renderer.setSize(container.clientWidth, container.clientHeight);
-      container.appendChild(this.renderer.domElement);
+      let container = document.getElementById('container');
+
+      // Use the external variables instead of 'this'
+      camera = new Three.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.01, 10);
+      camera.position.z = 1;
+
+      scene = new Three.Scene();
+      renderer = new Three.WebGLRenderer({ antialias: true });
+      renderer.setClearColor(0xaaaaaa);
+
+      let ambientLight = new Three.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+
+      // Create a simple cube instead of loading an OBJ model
+      let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2); // dimensions of the cube
+      let material = new Three.MeshStandardMaterial({ color: 0xff0000 }); // red color
+      let cube = new Three.Mesh(geometry, material);
+      this.scene.add(cube);
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
     },
 
     animate: function () {
       requestAnimationFrame(this.animate);
-      this.renderer.render(this.scene, this.camera);
-    }
+      renderer.render(scene, camera);
+    },
   },
   mounted() {
     this.startTimer()
