@@ -5,7 +5,7 @@ import Workouts from "@/components/Workouts.vue";
 import Scoreboard from "@/components/Scoreboard.vue";
 import WorkoutView from "@/components/WorkoutView.vue";
 
-const currView = ref(1);
+const currView = ref(0);
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const currView = ref(1);
       <div class="w-1/5" v-on:click="currView = 4" :class="currView == 4 ? 'text-fuchsia-600' : ''">
         <font-awesome-icon :icon="['fas', 'cog']"/>
       </div>
-      <div class="w-3/5 text-base flex-grow flex items-center justify-center">
+      <div class="w-3/5 text-base flex-grow flex items-center justify-center text-stone-400 uppercase">
         Competitive Yoga
       </div>
       <div class="w-1/5" v-on:click="currView = 5" :class="currView == 5 ? 'text-fuchsia-600' : ''">
@@ -23,7 +23,7 @@ const currView = ref(1);
     </div>
   </header>
 
-  <main class="pt-20 py-24" v-if="currView == 0">
+  <main class="pt-20 pb-16" v-if="currView == 0">
     <div class="px-6 mb-9 mt-4">
       <WorkoutCard headline="Recommended workout for the day" workout-name="Full body"
                    workout-description="Relax from daily stress and calm down"></WorkoutCard>
@@ -45,10 +45,7 @@ const currView = ref(1);
     <WorkoutView></WorkoutView>
   </main>
 
-  <main class="pt-20 py-24" v-else-if="currView == 2">
-    <div class="px-6 mb-9 mt-4 text-xl font-bold">
-      Scoreboard
-    </div>
+  <main class="py-20" v-else-if="currView == 2">
     <div class="px-6">
       <Scoreboard></Scoreboard>
     </div>
@@ -72,25 +69,25 @@ const currView = ref(1);
     </div>
   </main>
 
-  <footer class="z-50 w-full flex fixed bottom-0 text-xl bg-black px-4 text-white rounded-tl-2xl rounded-tr-2xl py-5">
+  <footer class="z-50 w-full flex fixed bottom-0 text-xl bg-black px-4 text-white rounded-tl-2xl rounded-tr-2xl py-3 justify-center items-center">
     <div class="w-1/4 px-5" v-on:click="currView = 0">
-      <div class="rounded-lg p-1 m-auto w-5/6 text-center" :class="currView == 0 ? 'bg-fuchsia-600' : 'bg-black'">
+      <div class="rounded-lg p-1 w-5/6 text-center" :class="currView == 0 ? 'bg-fuchsia-600' : 'bg-black'">
         <font-awesome-icon :icon="['fas', 'home']"/>
       </div>
     </div>
     <div class="w-1/4 px-4" v-on:click="currView = 1">
-      <div class="rounded p-1 m-auto w-5/6 text-center" :class="currView == 1 ? 'bg-fuchsia-600' : 'bg-black'">
+      <div class="rounded p-1 w-5/6 text-center" :class="currView == 1 ? 'bg-fuchsia-600' : 'bg-black'">
         <font-awesome-icon :icon="['fas', 'walking']"/>
       </div>
     </div>
     <div class="w-1/4 px-4" v-on:click="currView = 2">
-      <div class="rounded p-1 m-auto w-5/6 text-center" :class="currView == 2 ? 'bg-fuchsia-600' : 'bg-black'">
+      <div class="rounded p-1 w-5/6 text-center" :class="currView == 2 ? 'bg-fuchsia-600' : 'bg-black'">
         <font-awesome-icon :icon="['fas', 'trophy']"/>
       </div>
     </div>
     <div class="w-1/4 px-4" v-on:click="currView = 3">
-      <div class="rounded p-1 m-auto w-5/6 text-center" :class="currView == 3 ? 'bg-fuchsia-600' : 'bg-black'">
-        <font-awesome-icon :icon="['fas', 'user']"/>
+      <div class="w-9/12 text-center border-2 rounded-lg" :class="currView == 3 ? 'border-fuchsia-600' : 'border-black'">
+        <img src="./assets/pictures/cat.jpg" alt="profile picture" class="rounded-lg"/>
       </div>
     </div>
   </footer>
