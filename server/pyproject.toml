@@ -10,6 +10,7 @@ python = "^3.10"
 fastapi = "^0.104.1"
 uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
 pysqlite3 = "^0.5.2"
+opencv-python = "^4.8.1.78"
 
 
 [build-system]
