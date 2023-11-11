@@ -80,12 +80,24 @@ init() {
 
   // OBJ Loader
   let objLoader = new OBJLoader();
-  objLoader.load('teapot.obj', (objLoader) => {
-    objLoader.position.set(0, 0, 0); // Set position
-    objLoader.scale.set(0.1, 0.1, 0.1); // Set scale
-    scene.add(objLoader)
-    console.log(objLoader);
-    let box = new Three.BoxHelper(objLoader, 0xffff00);
+  objLoader.load('teapot.obj', (object) => {
+    const boundingBox = new Three.Box3().setFromObject(object);
+     // Get size of the bounding box
+    const objsize = new Three.Vector3();
+    boundingBox.getSize(objsize);
+    // Determine the desired size (you can adjust this)
+    const desiredSize = 1; // For example, you want the largest dimension to be 5 units
+    // Calculate the scale factor
+    const scaleFactor = desiredSize / Math.max(objsize.x, objsize.y, objsize.z);
+    // Apply the scale factor
+    object.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    // Get size of the bounding box
+    const size = new Three.Vector3();
+    boundingBox.getSize(size);
+    object.position.set(0, 0, 0); // Set position
+    scene.add(object)
+    console.log(object);
+    let box = new Three.BoxHelper(object, 0xffff00);
     scene.add(box);
   }),
 
