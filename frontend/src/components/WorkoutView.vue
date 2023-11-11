@@ -1,9 +1,10 @@
 <script lang="ts">
 import * as Three from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // Define Three.js variables outside of the Vue component
-let camera, scene, renderer;
+let camera, scene, renderer, controls;
 
 export default {
   name: "WorkoutView",
@@ -77,6 +78,10 @@ init() {
 
   let ambientLight = new Three.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight); 
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // Enable smooth animation
+  controls.dampingFactor = 0.1; // Damping factor
+  controls.enableZoom = true; // Enable zooming
 
   // OBJ Loader
   let objLoader = new OBJLoader();
@@ -107,6 +112,7 @@ init() {
 
     animate: function () {
       requestAnimationFrame(this.animate);
+      controls.update();
       renderer.render(scene, camera);
     },
   },
