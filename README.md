@@ -12,7 +12,7 @@ At the heart of PosePals is a custom model trained using MediaPipe on eight NVID
 
 ### Pose Judging
 - **Java Native Interface with [Open-CV](https://github.com/opencv/opencv) and [NCNN](https://github.com/Tencent/ncnn)**: Runs locally on-device for real-time analysis.
-- **Pytorch Training**: Utilizes 8x NVIDIA A100 AI-Accelerators on the [OpenPose]()-Dataset.
+- **Pytorch Training**: Utilizes 8x NVIDIA A100 AI-Accelerators on the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose)-Dataset.
 - **3D-Space Depth Analysis**: For accurate pose detection.
 
 ### Posture 3D-Model Generation
@@ -56,6 +56,7 @@ Thanks to the many open-source projects that our solution relies on.
 - [I2L-MeshNet](https://github.com/mks0601/I2L-MeshNet_RELEASE)
 - [Three.js](https://github.com/mrdoob/three.js)
 - [Vue.js](https://github.com/vuejs/core)
+- [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
 
 ## Support and Contribution
 
