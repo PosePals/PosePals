@@ -102,10 +102,16 @@ init() {
     const size = new Three.Vector3();
     boundingBox.getSize(size);
     object.position.set(0, 0, 0); // Set position
+    object.traverse((child) => {
+    if (child.isMesh) {
+        child.material.color.set(0xFFB6C1); // Set to blue for example
+    }
+    });
     scene.add(object)
     console.log(object);
-    let box = new Three.BoxHelper(object, 0xffff00);
-    scene.add(box);
+    //for debugging: show bounding box of object.
+    //let box = new Three.BoxHelper(object, 0xffff00);
+    //scene.add(box);
   }),
 
   renderer.setSize(container.clientWidth, container.clientHeight);
