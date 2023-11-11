@@ -105,7 +105,7 @@ init() {
 
   // OBJ Loader
   let objLoader = new OBJLoader();
-  objLoader.load('teapot.obj', (object) => {
+  objLoader.load('bridge.obj', (object) => {
     const boundingBox = new Three.Box3().setFromObject(object);
      // Get size of the bounding box
     const objsize = new Three.Vector3();
@@ -126,7 +126,8 @@ init() {
     }
     });
     scene.add(object)
-    console.log(object);
+    //for debugging: Log object to console
+    //console.log(object);
     //for debugging: show bounding box of object.
     //let box = new Three.BoxHelper(object, 0xffff00);
     //scene.add(box);
