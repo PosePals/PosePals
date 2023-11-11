@@ -75,7 +75,9 @@ init() {
   scene = new Three.Scene();
   renderer = new Three.WebGLRenderer({ antialias: true });
   renderer.setClearColor(0xaaaaaa);
-
+  const directionalLight = new Three.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(1, 1, 1).normalize();
+  scene.add(directionalLight);
   let ambientLight = new Three.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight); 
   controls = new OrbitControls(camera, renderer.domElement);
