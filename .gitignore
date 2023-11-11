@@ -16,4 +16,7 @@ local.properties
 **/__pycache__/
 
 
+# remove model weights / dependencies
 /app/src/main/assets/nn/
+/app/src/main/cpp/opencv-mobile-android/
+/app/src/main/cpp/ncnn-android-vulkan/
