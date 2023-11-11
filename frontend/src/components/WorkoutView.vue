@@ -1,7 +1,8 @@
 <script lang="ts">
 import * as Three from 'three'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
+import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
+import {MTLLoader} from 'three/examples/jsm/loaders/MTLLoader.js'
+
 export default {
   name: "WorkoutView",
   data() {
@@ -36,26 +37,27 @@ export default {
         this.currentState = 0
         this.currentExercise++
       }
-      if (this.currentExercise > this.exercise.length) {
+      if (this.currentExercise >= this.exercise.length) {
         clearInterval(this.timer)
         this.done = true
+      } else {
+        switch (this.currentState) {
+          case 0:
+            this.timeLimit = 30
+            break
+          case 1:
+            this.timeLimit = 120
+            break
+          case 2:
+            this.timeLimit = 10
+            break
+        }
+        this.timeElapsed = 0
       }
-      switch (this.currentState) {
-        case 0:
-          this.timeLimit = 30
-          break
-        case 1:
-          this.timeLimit = 120
-          break
-        case 2:
-          this.timeLimit = 10
-          break
-      }
-      this.timeElapsed = 0
     },
-    init: function() {
+    init: function () {
       let container = document.getElementById('container')
-      this.camera = new Three.PerspectiveCamera(70, container.clientWidth/container.clientHeight, 0.01, 10);
+      this.camera = new Three.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.01, 10);
       this.camera.position.z = 1;
       this.scene = new Three.Scene();
       this.renderer.setClearColor(0xaaaaaa)
@@ -64,13 +66,14 @@ export default {
       this.loader = new OBJLoader();
       this.loader.load('crow_mesh_lixel.obj', (loadedObject) => {
         this.scene.add(loadedObject)
-        console.log(loadedObject);})
+        console.log(loadedObject);
+      })
       this.renderer = new Three.WebGLRenderer({antialias: true});
       this.renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(this.renderer.domElement);
     },
 
-    animate: function() {
+    animate: function () {
       requestAnimationFrame(this.animate);
       this.renderer.render(this.scene, this.camera);
     }
@@ -94,12 +97,21 @@ export default {
 <template>
   <div class="w-full absolute bottom-14 bg-stone-100 pb-8">
     <div class="flex w-full px-6 mt-6">
-      <div v-for="(_, index) in exercise" class="w-1/5 mx-2 h-1 rounded-xl"
-           :class="index <= currentExercise ? 'bg-fuchsia-500' : 'bg-fuchsia-200'"></div>
+      <div v-for="(_, index) in exercise" class="w-1/5 mx-2 flex">
+        <div class="h-1 w-1/3"
+             :class="index < currentExercise || (index == currentExercise && currentState >= 0) ? 'bg-fuchsia-500' : 'bg-fuchsia-200'"></div>
+        <div class="h-1 w-1/3 mx-0.5"
+             :class="index < currentExercise || (index == currentExercise && currentState >= 1) ? 'bg-fuchsia-500' : 'bg-fuchsia-200'"></div>
+        <div class="h-1 w-1/3"
+             :class="index < currentExercise  || (index == currentExercise && currentState >= 2) ? 'bg-fuchsia-500' : 'bg-fuchsia-200'"></div>
+      </div>
     </div>
     <div class="px-8 pt-3 font-bold text-lg" v-if="!done">
       {{ exercise[currentExercise] }} -
       {{ currentState == 0 ? 'Calm down' : currentState == 1 ? 'Get into position' : 'Hold' }}
+    </div>
+    <div class="px-8 pt-3 font-bold text-lg" v-else>
+      You did it! Great job!
     </div>
     <div class="px-8">
       Current score: {{ score }}
