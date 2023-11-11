@@ -1,7 +1,7 @@
 <script lang="ts">
 import * as Three from 'three'
-import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
-import {MTLLoader} from 'three/examples/jsm/loaders/MTLLoader.js'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 // Define Three.js variables outside of the Vue component
 let camera, scene, renderer;
 
@@ -78,10 +78,16 @@ init() {
   let ambientLight = new Three.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight); 
 
-  let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2); // dimensions of the cube
-  let material = new Three.MeshStandardMaterial({ color: 0xff0000 }); // red color
-  let cube = new Three.Mesh(geometry, material);
-  scene.add(cube); // Use global scene, not this.scene
+  // OBJ Loader
+  let objLoader = new OBJLoader();
+  objLoader.load('teapot.obj', (objLoader) => {
+    objLoader.position.set(0, 0, 0); // Set position
+    objLoader.scale.set(0.1, 0.1, 0.1); // Set scale
+    scene.add(objLoader)
+    console.log(objLoader);
+    let box = new Three.BoxHelper(objLoader, 0xffff00);
+    scene.add(box);
+  }),
 
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
