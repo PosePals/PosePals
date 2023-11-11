@@ -87,7 +87,7 @@ init() {
 
   // OBJ Loader
   let objLoader = new OBJLoader();
-  objLoader.load('teapot.obj', (object) => {
+  objLoader.load('bridge.obj', (object) => {
     const boundingBox = new Three.Box3().setFromObject(object);
      // Get size of the bounding box
     const objsize = new Three.Vector3();
