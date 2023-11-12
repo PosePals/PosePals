@@ -30,7 +30,7 @@ jobs:
       working-directory: ./frontend
 
     - name: Build
-      run: npm run build
+      run: npm run build-only
       working-directory: ./frontend
 
     - name: Copy files to target directory
