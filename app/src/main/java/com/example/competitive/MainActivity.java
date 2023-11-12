@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.annotation.RequiresApi;
+import androidx.collection.CircularArray;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebViewAssetLoader;
@@ -31,6 +32,8 @@ import androidx.webkit.WebViewClientCompat;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.security.Key;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
@@ -63,7 +66,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     public static final int REQUEST_CAMERA = 10;
 
     private NNRuntime nnruntime = new NNRuntime();
+
+    private ArrayList<Keypoint> bridge_buffer;
     private int facing = 0;
+
+    private WebView webView;
 
     private Spinner spinnerModel;
     private Spinner spinnerCPUGPU;
@@ -72,20 +79,47 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 
     private SurfaceView cameraView;
 
+    // #####
+
+    private StringBuilder keypointString;
+    private int buffer_index = 0;
+
+    // #####
+
     private Handler handler = new Handler();
     private Runnable bridgeRunnable = new Runnable() {
         @Override
         public void run()
         {
-            System.out.println("ads");
-
             Bitmap bitmap = nnruntime.getBitmap();
 
             if (bitmap != null)
             {
+                if (buffer_index == 16)
+                {
+                    buffer_index = 0;
+
+                    String finalKeypointString = keypointString.toString();
+                    webView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            webView.loadUrl("javascript:(function() { " +
+                                    "document.getElementById('keypointData').value = '" + finalKeypointString + "'; " +
+                                    "})()");
+                        }
+                    });
+
+                    System.out.println(finalKeypointString);
+                }
+
+                if (buffer_index == 0)
+                {
+                    keypointString = new StringBuilder();
+                }
+
                 // Step 2: Convert Bitmap to ByteArrayOutputStream
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream); // You can choose the format and quality
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream); // You can choose the format and quality
 
                 // Step 3: Convert ByteArrayOutputStream to byte array
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
@@ -93,11 +127,42 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
                 // Step 4: Encode byte array to Base64 String
                 String base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
-                System.out.println(base64String);
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:(function() { " +
+                                "document.getElementById('base64Image').src = 'data:image/png;base64," + base64String + "'; " +
+                                "})()");
+                    }
+                });
+
+                // System.out.println(base64String);
+
+                System.out.println("==================================================");
+
+                Keypoint[] keypoints = nnruntime.getKeypointVector();
+
+                if (keypoints != null) {
+                    for (Keypoint keypoint : keypoints) {
+                        if (keypoint != null) {
+                            System.out.println("Keypoint: (x: " + keypoint.getX() + ", y: " + keypoint.getY() + ", z: " + keypoint.getZ() + "), ");
+                            keypointString.append(keypoint.getX()).append(";");
+                            keypointString.append(keypoint.getY()).append(";");
+                            keypointString.append(keypoint.getZ()).append(";");
+                        } else {
+                            System.out.println("lost keypoint");
+                            keypointString.append("0;");
+                            keypointString.append("0;");
+                            keypointString.append("0;");
+                        }
+                    }
+                    buffer_index++;
+                }
+                System.out.println("==================================================");
             }
 
             // Schedule the next run
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 50);
         }
     };
 
@@ -165,7 +230,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
             }
         });
 
-        WebView webView = (WebView)findViewById(R.id.webview);
+        webView = (WebView)findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true); // Enable JavaScript if needed
 
         // Load local HTML file

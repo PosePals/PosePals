@@ -76,10 +76,15 @@ static void decodeKeypoints3d(const ncnn::Mat& id_3d, int img_w, int img_h, std:
     {
         float pt_x = id_3d[i * num_kpt_offset] * img_w / 256;
         float pt_y = id_3d[i * num_kpt_offset + 1] * img_h / 256;
-        float pt_z = id_3d[i * num_kpt_offset + 2];
+        float pt_z = id_3d[i * num_kpt_offset + 3];
 
         keypoints.push_back(Keypoint3d(pt_x, pt_y, pt_z));
     }
+}
+
+std::vector<Keypoint3d> LandmarkDetect::get()
+{
+    return this->keypoint_vec;
 }
 
 float LandmarkDetect::detect(const cv::Mat& rgb,const cv::Mat& trans_mat, std::vector<Keypoint> &landmarks)
@@ -101,10 +106,13 @@ float LandmarkDetect::detect(const cv::Mat& rgb,const cv::Mat& trans_mat, std::v
     ex.extract("ld_3d", id_3d);
 
     std::vector<Keypoint> keypoints;
-    std::vector<Keypoint3d> keypoints3d;
+
+    this->keypoint_vec = std::vector<Keypoint3d>();
 
     decodeKeypoints(id_3d, rgb.cols, rgb.rows, keypoints);
-    decodeKeypoints3d(id_3d, rgb.cols, rgb.rows, keypoints3d);
+    decodeKeypoints3d(id_3d, rgb.cols, rgb.rows, this->keypoint_vec);
+
+    //__android_log_print(ANDROID_LOG_DEBUG, "ncnn", "FUCK MY LIFE");
 
     getOriginalCoord(keypoints, trans_mat, landmarks);
     return poseflag[0];

@@ -63,6 +63,8 @@ public:
 
     int draw(cv::Mat& rgb, const std::vector<Object>& objects);
 
+    std::vector<Keypoint3d> get();
+
 private:
     void smoothingLandmarks(std::vector<Keypoint>& detects, int img_w,int img_h);
     const int window_size = 5;

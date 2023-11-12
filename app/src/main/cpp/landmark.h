@@ -25,9 +25,11 @@ class LandmarkDetect
 public:
     int load(AAssetManager* mgr, const char* modeltype, bool use_gpu = false);
     float detect(const cv::Mat& rgb, const cv::Mat& trans_mat, std::vector<Keypoint> &landmarks);
+    std::vector<Keypoint3d> get();
 
 private:
     ncnn::Net landmark;
+    std::vector<Keypoint3d> keypoint_vec;
 };
 
 #endif // LANDMARK_H

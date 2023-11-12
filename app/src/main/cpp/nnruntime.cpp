@@ -112,8 +112,6 @@ public:
 
 void MyNdkCamera::on_image_render(cv::Mat& rgb) const
 {
-    output_material = rgb;
-
     {
         ncnn::MutexLockGuard g(lock);
 
@@ -128,6 +126,8 @@ void MyNdkCamera::on_image_render(cv::Mat& rgb) const
         {
             draw_unsupported(rgb);
         }
+
+        output_material = rgb;
     }
 
     draw_fps(rgb);
@@ -162,6 +162,17 @@ JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
 }
 
 jobject mat_to_bitmap(JNIEnv *env, cv::Mat &mat, bool needPremultiplyAlpha) {
+    // Convert mat from BGR to RGBA
+    if (mat.type() == CV_8UC3) {
+        cv::Mat tempMat;
+        cv::cvtColor(mat, tempMat, cv::COLOR_BGR2RGBA);
+        mat = tempMat;
+    } else if (mat.type() == CV_8UC1) {
+        cv::Mat tempMat;
+        cv::cvtColor(mat, tempMat, cv::COLOR_GRAY2RGBA);
+        mat = tempMat;
+    }
+
     jclass bitmapCls = env->FindClass("android/graphics/Bitmap");
     jmethodID createBitmapFunction = env->GetStaticMethodID(bitmapCls, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
     jstring configName = env->NewStringUTF("ARGB_8888");
@@ -173,15 +184,45 @@ jobject mat_to_bitmap(JNIEnv *env, cv::Mat &mat, bool needPremultiplyAlpha) {
     void *bitmapPixels;
     AndroidBitmap_lockPixels(env, newBitmap, &bitmapPixels);
     uint32_t* newBitmapPixels = (uint32_t*) bitmapPixels;
-    int pixelsCount = mat.cols * mat.rows;
 
-    // Copy pixels from Mat to Bitmap
-    memcpy(newBitmapPixels, mat.ptr(), sizeof(uint32_t) * pixelsCount);
+    // Copy pixels from mat to Bitmap
+    if (mat.isContinuous()) {
+        memcpy(newBitmapPixels, mat.ptr<uint8_t>(0), mat.cols * mat.rows * mat.elemSize());
+    } else {
+        for (int row = 0; row < mat.rows; ++row) {
+            memcpy(newBitmapPixels + row * mat.cols, mat.ptr<uint8_t>(row), mat.cols * mat.elemSize());
+        }
+    }
 
     AndroidBitmap_unlockPixels(env, newBitmap);
 
     return newBitmap;
 }
+
+extern "C"
+
+JNIEXPORT jobjectArray JNICALL Java_com_example_competitive_NNRuntime_getKeypointVector(JNIEnv *env, jobject thiz)
+{
+    std::vector<Keypoint3d> keypoint_vector = g_network_base->get();
+
+    if (keypoint_vector.empty()) {
+        return nullptr;
+    }
+
+    jclass keypointClass = env->FindClass("com/example/competitive/Keypoint");
+    jobjectArray keypointArray = env->NewObjectArray(keypoint_vector.size(), keypointClass, nullptr);
+
+    jmethodID constructor = env->GetMethodID(keypointClass, "<init>", "(FFFF)V");
+
+    for (size_t i = 0; i < keypoint_vector.size(); ++i) {
+        jobject keypointObj = env->NewObject(keypointClass, constructor, keypoint_vector[i].x, keypoint_vector[i].y, keypoint_vector[i].z, 0.f);
+        env->SetObjectArrayElement(keypointArray, i, keypointObj);
+        env->DeleteLocalRef(keypointObj);
+    }
+
+    return keypointArray;
+}
+
 
 extern "C"
 
@@ -211,8 +252,6 @@ JNIEXPORT jboolean JNICALL Java_com_example_competitive_NNRuntime_loadModel(JNIE
     __android_log_print(ANDROID_LOG_DEBUG, "ncnn", "loadModel %p", mgr);
     const char* modeltypes[] =
             {
-                    "nn/lite",
-                    "nn/full",
                     "nn/heavy"
             };
 

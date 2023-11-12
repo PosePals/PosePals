@@ -11,6 +11,7 @@ public class NNRuntime {
         public native boolean closeCamera();
         public native boolean setOutputWindow(Surface surface);
         public native Bitmap getBitmap();
+        public native Keypoint[] getKeypointVector();
 
         static {
         System.loadLibrary("nnruntime");
