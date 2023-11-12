@@ -485,6 +485,11 @@ void NetworkBase::smoothingLandmarks(std::vector<Keypoint>& detects, int img_w,i
     }
 }
 
+std::vector<Keypoint3d> NetworkBase::get()
+{
+    return this->pose_landmark.get();
+}
+
 int NetworkBase::detect(const cv::Mat& rgb, std::vector<Object>& objects)
 {
     ncnn::Mat img_tensor;
