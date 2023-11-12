@@ -1,5 +1,5 @@
 # PosePals
-<img align="right" width="100" height="100" src="/documentation/images/logo.png">
+<img align="right" width="200" height="200" src="/documentation/images/logo.png">
 
 ## Introduction
 Welcome to **PosePals** - a revolutionary mobile application that blends the ancient practice of yoga with modern machine learning technology. Developed during the [Junction Hackathon 2023](https://www.junction2023.com/), PosePals is the first of its kind in the world of yoga, offering an innovative way to learn, rate, and challenge your friends or your past self in the execution of yoga postures.
