@@ -35,5 +35,5 @@ jobs:
 
     - name: Copy files to target directory
       run: |
-        mkdir -p /app/src/main/assets/ui
-        cp -r ./frontend/dist/* /app/source/main/assets/ui/
+        mkdir -p ${{ github.workspace }}/app/src/main/assets/ui
+        cp -r ./frontend/dist/* ${{ github.workspace }}/app/src/main/assets/ui/
