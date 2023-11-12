@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
                     @Override
                     public void run() {
                         webView.loadUrl("javascript:(function() { " +
-                                "document.getElementById('base64Image').src = 'data:image/png;base64," + base64String + "'; " +
+                                "document.getElementById('camera').src = 'data:image/png;base64," + base64String + "'; " +
                                 "})()");
                     }
                 });
