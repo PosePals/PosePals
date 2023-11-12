@@ -1,4 +1,5 @@
 # PosePals
+[![Build Frontend](https://github.com/Artexety/competitive-yoga/actions/workflows/node.js.yml/badge.svg)](https://github.com/Artexety/competitive-yoga/actions/workflows/node.js.yml)
 <img align="right" width="200" height="200" src="/documentation/images/logo.png">
 
 ## Introduction
