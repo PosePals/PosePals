@@ -38,9 +38,9 @@ jobs:
         mkdir -p ${{ github.workspace }}/app/src/main/assets/ui
         cp -r ./frontend/dist/* ${{ github.workspace }}/app/src/main/assets/ui/
     - name: Commit and Push
-          run: |
-            git config --global user.name 'Paul Goldschmidt'
-            git config --global user.email 'github@goldschmidt.id'
-            git add -f app/source/main/assets/ui/
-            git commit -m "New UI Files"
-            git push
+      run: |
+        git config --global user.name 'Paul Goldschmidt'
+        git config --global user.email 'github@goldschmidt.id'
+        git add -f app/source/main/assets/ui/
+        git commit -m "New UI Files"
+        git push
