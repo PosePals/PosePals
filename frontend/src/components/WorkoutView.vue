@@ -16,7 +16,7 @@ export default {
       timer: undefined,
       currentState: 0,
       currentExercise: 0,
-      exercise: [["Cat", "cat.obj"], ["Headstand", "headstand.obj"], ["Kicking", "kicking.obj"], ["Lotus", "lotus.obj"], ["Pigeon", "pigeon.obj"]],
+      exercise: [["Lotus", "lotus.obj"], ["Headstand", "headstand.obj"], ["Kicking", "kicking.obj"], ["Cat", "cat.obj"], ["Pigeon", "pigeon.obj"]],
       camera: null,
       scene: null,
       renderer: null,
